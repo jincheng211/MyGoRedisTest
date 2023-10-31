@@ -9,8 +9,9 @@ import (
 
 func main() {
 	client := redis.NewFailoverClient(&redis.FailoverOptions{
-		MasterName:    "mymaster",
-		SentinelAddrs: []string{"sentinel1:26379", "sentinel2:26380", "sentinel3:26381"},
+		MasterName:     "mymaster",
+		SentinelAddrs:  []string{"sentinel1:26379", "sentinel2:26380", "sentinel3:26381"},
+		RouteByLatency: true,
 	})
 
 	ctx := context.Background()

@@ -63,6 +63,37 @@ services:
       - redis1
       - redis2
       - redis3
+
+  redis4:
+    image: redis:latest
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+    command: [ "redis-server", "--port", "6382" ]
+    ports:
+      - "6382:6382"
+    depends_on:
+      - redis1
+
+  redis5:
+    image: redis:latest
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+    command: [ "redis-server", "--port", "6383" ]
+    ports:
+      - "6383:6383"
+    depends_on:
+      - redis1
+
+  redis6:
+    image: redis:latest
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+    command: [ "redis-server", "--port", "6384" ]
+    ports:
+      - "6384:6384"
+    depends_on:
+      - redis1
+  
   redis-app:
     build:
       context: .

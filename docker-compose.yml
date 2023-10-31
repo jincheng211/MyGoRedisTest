@@ -1,0 +1,73 @@
+version: '3'
+services:
+  redis1:
+    image: redis:latest
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+    command: ["redis-server", "--port", "6379"]
+    ports:
+      - "6379:6379"
+
+  redis2:
+    image: redis:latest
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+    command: ["redis-server", "--port", "6380"]
+    ports:
+      - "6380:6380"
+    depends_on:
+      - redis1
+
+  redis3:
+    image: redis:latest
+    environment:
+      - REDIS_MASTER_NAME=mymaster
+    command: ["redis-server", "--port", "6381"]
+    ports:
+      - "6381:6381"
+    depends_on:
+      - redis1
+
+  sentinel1:
+    image: redis:latest
+    command: ["redis-sentinel", "/etc/redis/sentinel/sentinel1.conf"]
+    ports:
+      - "26379:26379"
+    volumes:
+      - ./sentinel/sentinel1.conf:/etc/redis/sentinel/sentinel1.conf
+    depends_on:
+      - redis1
+      - redis2
+      - redis3
+
+  sentinel2:
+    image: redis:latest
+    command: ["redis-sentinel", "/etc/redis/sentinel/sentinel2.conf"]
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./sentinel/sentinel2.conf:/etc/redis/sentinel/sentinel2.conf
+    depends_on:
+      - redis1
+      - redis2
+      - redis3
+
+  sentinel3:
+    image: redis:latest
+    command: ["redis-sentinel", "/etc/redis/sentinel/sentinel3.conf"]
+    ports:
+      - "26381:26379"
+    volumes:
+      - ./sentinel/sentinel3.conf:/etc/redis/sentinel/sentinel3.conf
+    depends_on:
+      - redis1
+      - redis2
+      - redis3
+  redis-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app/Redis
